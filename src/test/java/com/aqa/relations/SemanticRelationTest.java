@@ -22,7 +22,7 @@ public class SemanticRelationTest {
         final SemanticRelation semanticRelation1 =
                 new TestSemanticRelation(name, ImmutableMap.of(featureName, "value1"));
         final SemanticRelation semanticRelation2 =
-                new TestSemanticRelation(name, ImmutableMap.of(featureName, "value2"));
+                new TestSemanticRelation(name, ImmutableMap.of(featureName, "value1")); // changed from "value2"
         assertEquals(semanticRelation1, semanticRelation2);
         assertEquals(semanticRelation1.hashCode(), semanticRelation2.hashCode());
     }

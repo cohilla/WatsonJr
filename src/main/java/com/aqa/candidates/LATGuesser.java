@@ -25,11 +25,17 @@ public class LATGuesser {
         if (question.word(0).equalsIgnoreCase("where")) {
             return LAT.LOCATION;
         }
-        for (final String lemma : question.lemmas()) {
-            if (lemma.equalsIgnoreCase("eat") || lemma.equalsIgnoreCase("treat") ||
-                    lemma.equalsIgnoreCase("tasty"))
-                return LAT.FOOD;
+
+        if (question.word(0).equalsIgnoreCase("what")) {
+            for (final String lemma : question.lemmas()) {
+                if (lemma.equalsIgnoreCase("eat") || lemma.equalsIgnoreCase("treat") ||
+                        lemma.equalsIgnoreCase("tasty"))
+                    return LAT.FOOD;
+                else if (lemma.equalsIgnoreCase("sport") || lemma.equalsIgnoreCase("play"))
+                    return LAT.GAME;
+            }
         }
+
         return null;
     }
 }

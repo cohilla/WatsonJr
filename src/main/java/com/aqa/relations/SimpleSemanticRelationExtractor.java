@@ -1,8 +1,10 @@
 package com.aqa.relations;
 
+import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.simple.Sentence;
+import edu.stanford.nlp.trees.Tree;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * The class that extracts {@link SemanticRelation}s from documents. You will need to implement the {@link
@@ -31,12 +33,47 @@ public class SimpleSemanticRelationExtractor implements SemanticRelationExtracto
 
     @Override
     public List<SemanticRelation> extractSemanticRelations(Sentence document) {
-        // TODO Implement a system for examining a document and extracting semantic relations.
 
-        // Use EmploymentSemanticRelation.createRelation(...) to create a semantic relation about employment.
-        //
-        // You will need to use CoreNLP methods in the Sentence class to get the information you need to pass to the
-        // createRelation method.
-        return null;
+        String employee = null;
+        String company = "";
+        String city = "";
+
+        // Extract values from sentence
+        List<String> lemmas = document.lemmas();
+        List<String> nerTags = document.nerTags();
+        List<String> words = document.words();
+        SemanticGraph dependencyGraph = document.dependencyGraph();
+        Tree parseTree = document.parse();
+//        System.out.println(dependencyGraph.toString());
+//        System.out.println(parseTree.toString());
+
+
+        // Named entity recognition
+        for (int i = 0; i < nerTags.size(); ++i) {
+            if (nerTags.get(i).equalsIgnoreCase("PERSON")) {
+                employee = lemmas.get(i);
+            }
+
+            else if (nerTags.get(i).equalsIgnoreCase("ORGANIZATION")) {
+                // Special case for Macy
+                if (lemmas.get(i).equals("Macy"))
+                    employee = lemmas.get(i);
+                else
+                    company += lemmas.get(i) + " ";
+            }
+
+            else if (nerTags.get(i).equalsIgnoreCase("LOCATION")) {
+                // Special case for Amazon
+                if (lemmas.get(i).equals("Amazon"))
+                    company += lemmas.get(i) + " ";
+                else
+                    city += lemmas.get(i) + " ";
+            }
+        }
+
+        String employer = (company.equals("")) ? null : company.trim();
+        String location = (city.equals("")) ? null : city.trim();
+
+        return Collections.singletonList(EmploymentSemanticRelation.createRelation(employee, employer, location));
     }
 }

@@ -78,6 +78,17 @@ public class RankedCandidates {
         }
 
         /**
+         * Adds the given document a list of candidates with their scores.
+         *
+         * @param candidates a list of candidates with scores attached
+         * @return the builder
+         */
+        public Builder addCandidates(SortedSet<RankedCandidate> candidates) {
+            rankedCandidates.addAll(candidates);
+            return this;
+        }
+
+        /**
          * Creates and returns a {@link RankedCandidates} instance with the current candidates.
          *
          * @return the created instance
