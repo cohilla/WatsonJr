@@ -46,35 +46,35 @@ public class LuceneRanker implements Ranker {
         Directory directory = new RAMDirectory();
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        IndexWriter iwriter = new IndexWriter(directory, config);
+        IndexWriter indexWriter = new IndexWriter(directory, config);
 
         // Add docs from knowledge base
         for (com.aqa.kb.Document doc : knowledgeBase.getDocuments()) {
-            System.out.println(doc.toString());
             Document d = new Document();
             d.add(new Field("fieldname", doc.getText(), TextField.TYPE_STORED));
-            iwriter.addDocument(d);
+            indexWriter.addDocument(d);
         }
-        iwriter.close();
+        indexWriter.close();
 
-        // Now search the index:
+        // Now search the index
         DirectoryReader directoryReader = DirectoryReader.open(directory);
         IndexSearcher indexSearcher = new IndexSearcher(directoryReader);
         QueryParser parser = new QueryParser("fieldname", analyzer);
         Query query = parser.parse(question);
 
         ScoreDoc[] hits = indexSearcher.search(query, 1000).scoreDocs;
-        SortedSet<RankedCandidate> results = new TreeSet<>();
 
-        // Iterate through the results and add them to the results:
+        RankedCandidates.Builder rankedCandidatesBuilder = new RankedCandidates.Builder(question);
+
+        // Iterate through the results and add them to the builder object
         for (ScoreDoc hit : hits) {
-            results.add(new RankedCandidate(hit.score, knowledgeBase.getDocument(hit.doc + 1)));
+            rankedCandidatesBuilder.addCandidate(knowledgeBase.getDocument(hit.doc + 1), hit.score);
         }
 
         directoryReader.close();
         directory.close();
 
-        return new RankedCandidates.Builder(question).addCandidates(results).build();
+        return rankedCandidatesBuilder.build();
     }
 
 }

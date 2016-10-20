@@ -23,13 +23,13 @@ public class SemanticRelationRanker implements Ranker {
     private RankedCandidates answerQuestion(KnowledgeBase knowledgeBase, String question,
                                             SemanticRelationExtractor semanticRelationExtractor) {
 
-        // get SemanticRelation data for question
+        // Get SemanticRelation data for question
         List<SemanticRelation> questionSemanticRelation = semanticRelationExtractor.extractSemanticRelations(new Sentence(question));
         Map<String, String> questionSemanticRelationFeatures = questionSemanticRelation.get(0).getFeatures();
 
-        SortedSet<RankedCandidate> rankedCandidates = new TreeSet<>();
+        RankedCandidates.Builder rankedCandidatesBuilder = new RankedCandidates.Builder(question);
 
-        // compare against semantic relation in documents and rate based on match
+        // Compare against semantic relation in documents and rate based on match
         for (Document employment : knowledgeBase.getDocuments()) {
             List<SemanticRelation> semanticRelationList = employment.getSemanticRelations();
 
@@ -40,12 +40,12 @@ public class SemanticRelationRanker implements Ranker {
                 if (questionSemanticRelationFeatures.get("employee") == null && semanticRelation.getFeatures().get("employee") != null) {
                     if (questionSemanticRelationFeatures.get("employer").equals(employmentSemanticRelationFeatures.get("employer"))
                             && questionSemanticRelationFeatures.get("location").equals(employmentSemanticRelationFeatures.get("location")))
-                        rankedCandidates.add(new RankedCandidate(1, employment));
+                        rankedCandidatesBuilder.addCandidate(employment, 1);
                 }
 
             }
         }
 
-        return new RankedCandidates.Builder(question).addCandidates(rankedCandidates).build();
+        return rankedCandidatesBuilder.build();
     }
 }

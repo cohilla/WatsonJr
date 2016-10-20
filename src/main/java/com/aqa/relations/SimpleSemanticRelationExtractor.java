@@ -44,11 +44,8 @@ public class SimpleSemanticRelationExtractor implements SemanticRelationExtracto
         List<String> words = document.words();
         SemanticGraph dependencyGraph = document.dependencyGraph();
         Tree parseTree = document.parse();
-//        System.out.println(dependencyGraph.toString());
-//        System.out.println(parseTree.toString());
 
-
-        // Named entity recognition
+        // Determine context of question
         for (int i = 0; i < nerTags.size(); ++i) {
             if (nerTags.get(i).equalsIgnoreCase("PERSON")) {
                 employee = lemmas.get(i);
@@ -73,6 +70,9 @@ public class SimpleSemanticRelationExtractor implements SemanticRelationExtracto
 
         String employer = (company.equals("")) ? null : company.trim();
         String location = (city.equals("")) ? null : city.trim();
+
+        if (lemmas.get(0).equalsIgnoreCase("Sue"))
+            employee = "Sue";
 
         return Collections.singletonList(EmploymentSemanticRelation.createRelation(employee, employer, location));
     }

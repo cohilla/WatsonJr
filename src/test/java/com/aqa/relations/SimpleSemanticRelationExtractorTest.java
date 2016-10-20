@@ -23,7 +23,7 @@ public class SimpleSemanticRelationExtractorTest {
         testEmploymentRelation("Bob works for Google.", "Bob", "Google", null);
         testEmploymentRelation("Joe was hired by Google.", "Joe", "Google", null);
         // Test case changed from Sue to Susan as suggested by Dr. Porter
-        testEmploymentRelation("Susan is employed by Google.", "Susan", "Google", null);
+        testEmploymentRelation("Sue is employed by Google.", "Sue", "Google", null);
         testEmploymentRelation("Google hired Mark.", "Mark", "Google", null);
         testEmploymentRelation("Mary works at Google in San Francisco.", "Mary", "Google", "San Francisco");
         testEmploymentRelation("Toby works for Microsoft in Seattle.", "Toby", "Microsoft", "Seattle");
